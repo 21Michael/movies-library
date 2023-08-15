@@ -18,3 +18,5 @@ $ npm run start:prod
 ```
 
 ## Structure
+
+![Movies-library.drawio.png](Movies-library.drawio.png)

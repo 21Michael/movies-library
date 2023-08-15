@@ -1,0 +1,69 @@
+version: "2.6"
+
+services:
+  movies-library-postgresql:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - ../../postgresql/data:/var/lib/postgresql/data
+    container_name: movies-library-postgresql
+    command: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: always
+    environment:
+      - POSTGRES_DB=movies
+      - POSTGRES_USER=Mikhail
+      - POSTGRES_PASSWORD=12345
+    networks:
+      - movies-library-network
+
+  movies-library-mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - ../../mongo/data:/data/db
+    container_name: movies-library-mongo
+    command: mongod
+    healthcheck:
+      test: mongo mongo:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: always
+    networks:
+      - movies-library-network
+
+  movies-library-api:
+    build:
+      context: ../../
+      dockerfile: api/Dockerfile
+    image: mikhail21/movies-library-api:latest
+    environment:
+      - STAGE=dev # dev / prod
+      - MONGODB_HOST=movies-library-mongo:27017
+    volumes:
+      - ../../api:/usr/api
+    ports:
+      - 4000:4000
+    container_name: movies-library-api
+    healthcheck:
+      test: curl -f localhost:4000/healthy
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - movies-library-mongo
+    networks:
+      - movies-library-network
+
+networks:
+  movies-library-network:
+    driver: bridge
