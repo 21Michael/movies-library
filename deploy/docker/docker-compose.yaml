@@ -51,7 +51,8 @@ services:
     image: mikhail21/movies-library-api:latest
     environment:
       - STAGE=dev # dev / prod
-      - MONGODB_HOST=movies-library-mongo:27017
+      - MONGO_DB_HOST=movies-library-mongo # :27017
+      - POSTGRES_DB_HOST=movies-library-postgresql
     volumes:
       - ../../api:/usr/api
     ports:
