@@ -2,15 +2,18 @@ version: "2.6"
 
 services:
   movies-library-postgresql:
-    image: postgres:latest
+    build:
+      context: ../../
+      dockerfile: db/postgresql/Dockerfile
+    image:  mikhail21/movies-library-postgres:latest
     ports:
       - 5432:5432
     volumes:
-      - ../../postgresql/data:/var/lib/postgresql/data
+      - ../../db/postgresql/data:/var/lib/postgresql/data
     container_name: movies-library-postgresql
     command: postgres
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h localhost"]
+      test: ["CMD-SHELL", "pg_isready -h localhost -U Mikhail -d movies"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -28,7 +31,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ../../mongo/data:/data/db
+      - ../../db/mongo/data:/data/db
     container_name: movies-library-mongo
     command: mongod
     healthcheck:
