@@ -53,10 +53,13 @@ services:
       - STAGE=dev # dev / prod
       - MONGO_DB_HOST=movies-library-mongo # :27017
       - POSTGRES_DB_HOST=movies-library-postgresql
+      - POSTGRES_DB=movies
+      - POSTGRES_USER=Mikhail
+      - POSTGRES_PASSWORD=12345
     volumes:
       - ../../api:/usr/api
     ports:
-      - 4000:4000
+      - 3000:3000
     container_name: movies-library-api
     healthcheck:
       test: curl -f localhost:4000/healthy
@@ -64,7 +67,10 @@ services:
       timeout: 10s
       retries: 3
     depends_on:
-      - movies-library-mongo
+      movies-library-postgresql:
+          condition: service_healthy
+      movies-library-mongo:
+        condition: service_started
     networks:
       - movies-library-network
 

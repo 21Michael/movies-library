@@ -1,27 +1,28 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './modules/users/users.module';
 import { MoviesModule } from './modules/movies/movies.module';
-import { UsersController } from './modules/users/controllers/users.controller';
-import { MoviesController } from './modules/movies/controllers/movies.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as process from 'process';
+import {
+  POSTGRES_DB,
+  POSTGRES_DB_HOST,
+  POSTGRES_PASSWORD,
+  POSTGRES_USER,
+} from '../config';
 
 @Module({
   imports: [
-    UsersModule,
     MoviesModule,
+    UsersModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_DB_HOST,
+      host: POSTGRES_DB_HOST,
       port: 5432,
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
-      entities: [],
+      username: POSTGRES_USER,
+      password: POSTGRES_PASSWORD,
+      database: POSTGRES_DB,
       autoLoadEntities: true,
       synchronize: true,
     }),
   ],
-  controllers: [UsersController, MoviesController],
 })
 export class AppModule {}

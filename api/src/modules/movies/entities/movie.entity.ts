@@ -1,14 +1,16 @@
 import {
   Column,
+  Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DirectorEntity } from './director.entity';
-import { JoinTable } from 'typeorm/browser';
 import { ActorEntity } from './actor.entity';
 
+@Entity()
 export class MovieEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,14 +19,24 @@ export class MovieEntity {
   name: string;
 
   @ManyToMany(() => ActorEntity)
-  @JoinTable()
+  @JoinTable({
+    name: 'movie_actor',
+    joinColumn: {
+      name: 'movie_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'actor_id',
+      referencedColumnName: 'id',
+    },
+  })
   actors: ActorEntity[];
 
   @Column({ unique: true })
-  directorId: string;
+  director_id: string;
 
   @OneToOne(() => DirectorEntity)
-  @JoinColumn({ name: 'directorId' })
+  @JoinColumn({ name: 'director_id' })
   director: DirectorEntity;
 
   @Column()

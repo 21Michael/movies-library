@@ -11,6 +11,6 @@ RUN npm i
 
 COPY ./api .
 
-EXPOSE 4000
+EXPOSE 3000
 
-CMD ["npm", "run", "start:$STAGE"]
+CMD ["npm", "run", "start", "--STAGE=$STAGE"]

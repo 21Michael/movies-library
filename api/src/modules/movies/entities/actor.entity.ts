@@ -1,12 +1,19 @@
-import { Column, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { MovieEntity } from './movie.entity';
 
+@Entity()
 export class ActorEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  fullName: string;
+  full_name: string;
 
   @Column()
   gender: string;
@@ -15,6 +22,16 @@ export class ActorEntity {
   age: number;
 
   @ManyToMany(() => MovieEntity)
-  @JoinTable()
+  @JoinTable({
+    name: 'movie_actor',
+    joinColumn: {
+      name: 'actor_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'movie_id',
+      referencedColumnName: 'id',
+    },
+  })
   movies: MovieEntity[];
 }
