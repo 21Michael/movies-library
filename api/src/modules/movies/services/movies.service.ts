@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateMovieDto, UpdateMovieDto } from '../dto/movies.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MovieEntity } from '../entities/movie.entity';
@@ -39,25 +43,29 @@ export class MoviesService {
   }
 
   public async addMovie(createMovieDto: CreateMovieDto): Promise<MovieEntity> {
-    const { name, director_id, description, actors } = createMovieDto;
+    try {
+      const { name, director_id, description, actors } = createMovieDto;
 
-    const movie = this.moviesRepository.create({
-      name,
-      director_id,
-      description,
-    });
-
-    if (actors.length) {
-      const actorsExist = await this.actorsRepository.find({
-        where: actors,
+      const movie = this.moviesRepository.create({
+        name,
+        director_id,
+        description,
       });
 
-      movie.actors = actorsExist;
+      if (actors.length) {
+        const actorsExist = await this.actorsRepository.find({
+          where: actors,
+        });
+
+        movie.actors = actorsExist;
+      }
+
+      await this.moviesRepository.save(movie);
+
+      return movie;
+    } catch (e) {
+      throw new InternalServerErrorException(e);
     }
-
-    this.moviesRepository.save(movie);
-
-    return movie;
   }
 
   async updateMovie({
@@ -67,12 +75,11 @@ export class MoviesService {
     id: string;
     updateMovieDto: UpdateMovieDto;
   }): Promise<void> {
-    const { name, director_id, director, actors, description } = updateMovieDto;
+    const { name, director_id, actors, description } = updateMovieDto;
 
     await this.moviesRepository.update(id, {
       name,
       director_id,
-      director,
       actors,
       description,
     });

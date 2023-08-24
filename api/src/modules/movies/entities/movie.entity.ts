@@ -4,7 +4,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DirectorEntity } from './director.entity';
@@ -32,10 +32,10 @@ export class MovieEntity {
   })
   actors: ActorEntity[];
 
-  @Column({ unique: true })
+  @Column()
   director_id: string;
 
-  @OneToOne(() => DirectorEntity)
+  @ManyToOne(() => DirectorEntity)
   @JoinColumn({ name: 'director_id' })
   director: DirectorEntity;
 

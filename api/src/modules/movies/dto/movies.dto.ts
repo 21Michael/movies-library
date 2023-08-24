@@ -1,12 +1,5 @@
-import {
-  IsArray,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ActorEntity } from '../entities/actor.entity';
-import { DirectorEntity } from '../entities/director.entity';
 
 export class CreateMovieDto {
   @IsNotEmpty()
@@ -38,10 +31,6 @@ export class UpdateMovieDto {
   @IsOptional()
   @IsString()
   director_id: string;
-
-  @IsOptional()
-  @IsObject()
-  director?: DirectorEntity;
 
   @IsOptional()
   @IsString()
